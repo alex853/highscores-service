@@ -7,7 +7,9 @@ import java.util.Queue;
 
 public class HighScores {
     private static final Queue<PlayerScore> queue = new LinkedList<>();
+
     private static List<PlayerScore> highscores;
+    private static long expirationTime = 3600000;
 
     public static synchronized void putScore(String player, int score) {
         queue.add(new PlayerScore(player, score));
@@ -48,7 +50,7 @@ public class HighScores {
                 break;
             }
 
-            if (System.currentTimeMillis() - playerScore.getAdded() < 3600000) {
+            if (System.currentTimeMillis() - playerScore.getAdded() < expirationTime) {
                 break;
             }
 
@@ -56,6 +58,10 @@ public class HighScores {
             hasAnythingChanged = true;
         }
         return hasAnythingChanged;
+    }
+
+    public static synchronized void setExpirationTime(long expirationTime) {
+        HighScores.expirationTime = expirationTime;
     }
 
     public static class PlayerScore {
